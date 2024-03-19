@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo Task</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+
+</head>
+<body>
+    <div id="taskList" class="tasklist">
+      <h1>Todo Task</h1>
+    <!-- Tasks will be displayed here -->
+  </div>
+  <form id="taskForm" action="/submit" method="post">
+    <input type="text" id="task" name="task" required><br>
+    <input type="date" id="date" name="date" required><br>
+    <input type="time" id="time" name="time" required><br>
+    <button type="submit">Add Task</button>
+  </form>
+  
+ 
+
+  <script>
+    let fetchTasks=async() =>{
+        try {
+            const response = await fetch('/tasks');
+            const tasks = await response.json();
+            const taskListDiv = document.getElementById('taskList');
+            tasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = "task-holder";
+                taskDiv.innerHTML = `
+                    <div class="task">
+                        <input type="checkbox" class="checktask" data-id="${task._id}">
+                        <h5>${task.task}</h5>
+                        <p>edit</p>
+                    </div>
+                    <p>${task.date} - ${task.time}</p>`;
+                taskListDiv.appendChild(taskDiv);
+            });
+
+           
+            document.querySelectorAll('.checktask').forEach(checkbox => {
+                checkbox.addEventListener('change', async function () {
+                    if (this.checked) {
+                        const taskId = this.getAttribute('data-id');
+                        await deleteTask(taskId);
+                        this.closest('.task-holder').remove();
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+   let deleteTask=async(taskId) =>{
+        try {
+            const response = await fetch('/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: taskId })
+            });
+            if (!response.ok) {
+                throw Error('Failed to delete task');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    window.onload = () => {
+        fetchTasks();
+    };
+</script>
+
+</body>
+</html>
+ 
