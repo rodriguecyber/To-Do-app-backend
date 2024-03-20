@@ -19,7 +19,7 @@ userRoutes.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const newUser = yield User_1.default.create({
             name: req.body.name,
-            telno: req.body.email,
+            email: req.body.email,
             password: req.body.password
         });
         res.json(newUser);

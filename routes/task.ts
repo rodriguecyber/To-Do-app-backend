@@ -15,7 +15,7 @@ taskRoutes.post('/upload', async (req:Request, res:Response) => {
     });
     res.status(201).json(newTask); 
   } catch (error) {
-    console.error('Error creating task:', error);
+    res.send('Error creating task:');
     res.status(500)
   }
 });
@@ -46,14 +46,17 @@ taskRoutes.patch('/update/:id', async(req:Request,res:Response)=>{
   try{
     
   await Task.findOne({_id:req.params.id})
-  await Task.updateOne({_id:req.params.id},{
+  await Task.updateOne(
+    {_id:req.params.id},
+    {
   $set:{
     task:req.body.task,
     date:req.body.date,
     time:req.body.time
   }
   
-})
+},
+{upsert:true})
      res.send('task updated')
   }
   catch(error){

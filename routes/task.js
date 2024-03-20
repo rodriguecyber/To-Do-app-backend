@@ -41,6 +41,7 @@ taskRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 }));
 taskRoutes.delete('/delete/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        yield Task_1.default.findOne({ _id: req.params.id });
         yield Task_1.default.deleteOne({ _id: req.params.id });
         res.json('task deleted');
     }
@@ -50,13 +51,14 @@ taskRoutes.delete('/delete/:id', (req, res) => __awaiter(void 0, void 0, void 0,
 }));
 taskRoutes.patch('/update/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        yield Task_1.default.findOne({ _id: req.params.id });
         yield Task_1.default.updateOne({ _id: req.params.id }, {
             $set: {
                 task: req.body.task,
                 date: req.body.date,
                 time: req.body.time
             }
-        });
+        }, { upsert: true });
         res.send('task updated');
     }
     catch (error) {

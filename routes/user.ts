@@ -7,7 +7,7 @@ const userRoutes=express.Router()
     try {
         const newUser = await User.create({
             name: req.body.name,
-            telno: req.body.email,
+            email: req.body.email,
             password: req.body.password
         });
         res.json(newUser);
