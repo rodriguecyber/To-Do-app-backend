@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "start": "nodemon script.ts",
+    "start": "nodemon script.ts ",
     "test": "jest  --silent ",
     "compile":"tsc"
   },

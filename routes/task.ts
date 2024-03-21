@@ -27,7 +27,7 @@ taskRoutes.get('/',async(req,res)=>{
   res.status(200)
  }
  catch(error){
- res.send('failed to get tasks')
+ res.json('failed to get tasks')
  }
 })
 taskRoutes.delete('/delete/:id',async(req,res)=>{
@@ -38,7 +38,7 @@ try{
  res.json('task deleted')
 }
 catch(error){
-  res.send('failed to delete task')
+  res.json('failed to delete task')
 }
 })
 

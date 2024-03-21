@@ -25,7 +25,7 @@ taskRoutes.post('/upload', (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(201).json(newTask);
     }
     catch (error) {
-        console.error('Error creating task:', error);
+        res.send('Error creating task:');
         res.status(500);
     }
 }));
@@ -36,7 +36,7 @@ taskRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(200);
     }
     catch (error) {
-        res.send('failed to get tasks');
+        res.json('failed to get tasks');
     }
 }));
 taskRoutes.delete('/delete/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,7 +46,7 @@ taskRoutes.delete('/delete/:id', (req, res) => __awaiter(void 0, void 0, void 0,
         res.json('task deleted');
     }
     catch (error) {
-        res.send('failed to delete task');
+        res.json('failed to delete task');
     }
 }));
 taskRoutes.patch('/update/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

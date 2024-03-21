@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import userRoutes from './routes/user'
 import taskRoutes from './routes/task'
+import dotenv from 'dotenv'
+dotenv.config()
 const app = express(); 
 const PORT = 5000;
 app.use(express.urlencoded({ extended: true }))

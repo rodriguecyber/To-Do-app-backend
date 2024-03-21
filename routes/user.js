@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const User_1 = __importDefault(require("../models/User"));
+const userMidleware_1 = __importDefault(require("../middeware/userMidleware"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userRoutes = express_1.default.Router();
 userRoutes.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -29,6 +31,21 @@ userRoutes.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, funct
         res.status(400).send('Failed to register');
     }
 }));
+userRoutes.get('/user', userMidleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = req.currentUser;
+        if (user.type) {
+            const users = yield User_1.default.find();
+            res.json(users);
+        }
+        else {
+            res.json({ message: 'not admin' });
+        }
+    }
+    catch (err) {
+        res.sendStatus(400);
+    }
+}));
 userRoutes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield User_1.default.findOne({ email: req.body.email });
@@ -37,7 +54,9 @@ userRoutes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
         }
         else {
             if (user.password === req.body.password) {
-                res.send('Logged in');
+                const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "2d" });
+                req.currentUser = user;
+                res.status(200).json({ message: 'user loged in', token: token });
             }
             else {
                 res.send('Wrong password');
