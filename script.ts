@@ -5,10 +5,11 @@ import taskRoutes from './routes/task'
 import dotenv from 'dotenv'
 dotenv.config()
 const app = express(); 
-const PORT = 5000;
+const Database:any = process.env.MONGODB_URI
+const PORT = process.env.PORT;
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
-mongoose.connect('mongodb://localhost:27017/todotask');
+mongoose.connect(Database)
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
