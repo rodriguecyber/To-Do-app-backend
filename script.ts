@@ -9,7 +9,7 @@ const Database:any = process.env.MONGODB_URI
 const PORT = process.env.PORT;
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
-mongoose.connect(Database)
+mongoose.connect(Database )
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
