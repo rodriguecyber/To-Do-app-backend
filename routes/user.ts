@@ -22,9 +22,10 @@ const userRoutes=express.Router()
 userRoutes.get('/user',authenticateToken, async(req:any,res:Response)=>{    
 try{
     const user=req.currentUser
-if(user.type){
+if(user.userType){
     const users = await User.find()
     res.json(users)
+
 }
 else{
     res.json({message:'not admin'})
@@ -44,11 +45,13 @@ userRoutes.post('/login',async (req:any,res:Response) => {
             res.send('User not found');
         } else {
             if (user.password === req.body.password) {
-          
-                const token = jwt.sign({userId:user._id},process.env.JWT_SECRET as string, {expiresIn:"2d"})
+             const expire=eval(process.env.EXPIRE as string)
+                const token = jwt.sign({userId:user._id,exp:expire},process.env.JWT_SECRET as string)
                 req.currentUser=user
-                res.status(200).json({message:'user loged in',token:token});
-            } else {
+                res.status(200).json({message:'user loged in',token:token, expirein:(Math.floor(expire-Math.floor(Date.now())/1000))+"s"});
+               req.exptime=expire
+            } 
+            else {
                 res.send('Wrong password');
             }
         }

@@ -1,19 +1,31 @@
 import { Request, Response } from "express";
 import express from 'express'
 import Task from "../models/Task";
+import authenticateToken from "../middeware/userMidleware";
+import {taskValiadtion, validationSchema} from '../validation/taskValidation'
 
 const taskRoutes=express.Router()
 
 
 
-taskRoutes.post('/upload', async (req:Request, res:Response) => {
+taskRoutes.post('/upload',authenticateToken, async(req:any, res:Response) => {
   try {
-    const newTask = await Task.create({
+    const newTask ={
+      userId:req.currentUser._id,
       task: req.body.task,
       date: req.body.date,
       time: req.body.time
-    });
-    res.status(201).json(newTask); 
+    };
+     const validResult =validationSchema.validate(newTask)
+     if(validResult.error){
+      res.status(400).json({ error: validResult.error.details[0].message });
+     }
+     else{
+    await Task.create(newTask);
+    res.json({message:'task added'})
+
+  }
+    
   } catch (error) {
     res.send('Error creating task:');
     res.status(500)
@@ -21,8 +33,7 @@ taskRoutes.post('/upload', async (req:Request, res:Response) => {
 });
 taskRoutes.get('/',async(req,res)=>{
  try{
-  const task= await Task.find()
-  
+  const task= await Task.find()  
   res.json(task)
   res.status(200)
  }

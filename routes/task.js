@@ -14,15 +14,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const Task_1 = __importDefault(require("../models/Task"));
+const userMidleware_1 = __importDefault(require("../middeware/userMidleware"));
+const taskValidation_1 = require("../validation/taskValidation");
 const taskRoutes = express_1.default.Router();
-taskRoutes.post('/upload', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+taskRoutes.post('/upload', userMidleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newTask = yield Task_1.default.create({
+        const newTask = {
+            userId: req.currentUser._id,
             task: req.body.task,
             date: req.body.date,
             time: req.body.time
-        });
-        res.status(201).json(newTask);
+        };
+        const validResult = taskValidation_1.validationSchema.validate(newTask);
+        if (validResult.error) {
+            res.status(400).json({ error: validResult.error.details[0].message });
+        }
+        else {
+            yield Task_1.default.create(newTask);
+            res.json({ message: 'task added' });
+        }
     }
     catch (error) {
         res.send('Error creating task:');

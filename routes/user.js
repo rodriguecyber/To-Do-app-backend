@@ -34,9 +34,9 @@ userRoutes.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, funct
 userRoutes.get('/user', userMidleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = req.currentUser;
-        if (user.type) {
+        if (user.userType) {
             const users = yield User_1.default.find();
-            res.json(users);
+            res.json(req.remTime);
         }
         else {
             res.json({ message: 'not admin' });
@@ -54,9 +54,11 @@ userRoutes.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, functi
         }
         else {
             if (user.password === req.body.password) {
-                const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "2d" });
+                const expire = eval(process.env.EXPIRE);
+                const token = jsonwebtoken_1.default.sign({ userId: user._id, exp: expire }, process.env.JWT_SECRET);
                 req.currentUser = user;
-                res.status(200).json({ message: 'user loged in', token: token });
+                res.status(200).json({ message: 'user loged in', token: token, expirein: (Math.floor(expire - Math.floor(Date.now()) / 1000)) + "s" });
+                req.exptime = expire;
             }
             else {
                 res.send('Wrong password');

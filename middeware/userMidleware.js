@@ -17,13 +17,20 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authenticateToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if (!token)
-        return res.sendStatus(401);
     jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET, (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
         if (err)
             return res.sendStatus(403);
         req.currentUser = yield User_1.default.findById(decoded.userId);
-        next();
+        const exDate = decoded.exp;
+        req.remTime = exDate;
+        if (Math.floor(Date.now() / 1000) > exDate) {
+            res.json({
+                message: "token expired"
+            });
+        }
+        else {
+            next();
+        }
     }));
 });
 exports.default = authenticateToken;

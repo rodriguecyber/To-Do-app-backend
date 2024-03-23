@@ -10,10 +10,11 @@ const task_1 = __importDefault(require("./routes/task"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = 5000;
+const Database = process.env.MONGODB_URI;
+const PORT = process.env.PORT;
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
-mongoose_1.default.connect('mongodb://localhost:27017/todotask');
+mongoose_1.default.connect(Database);
 const db = mongoose_1.default.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
