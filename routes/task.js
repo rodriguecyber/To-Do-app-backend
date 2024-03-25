@@ -39,9 +39,9 @@ taskRoutes.post('/upload', userMidleware_1.default, (req, res) => __awaiter(void
         res.status(500);
     }
 }));
-taskRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+taskRoutes.get('/', userMidleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const task = yield Task_1.default.find();
+        const task = yield Task_1.default.find({ userId: req.currentUser._id });
         res.json(task);
         res.status(200);
     }
@@ -49,7 +49,7 @@ taskRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.json('failed to get tasks');
     }
 }));
-taskRoutes.delete('/delete/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+taskRoutes.delete('/delete/:id', userMidleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield Task_1.default.findOne({ _id: req.params.id });
         yield Task_1.default.deleteOne({ _id: req.params.id });
@@ -59,7 +59,7 @@ taskRoutes.delete('/delete/:id', (req, res) => __awaiter(void 0, void 0, void 0,
         res.json('failed to delete task');
     }
 }));
-taskRoutes.patch('/update/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+taskRoutes.patch('/update/:id', userMidleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield Task_1.default.findOne({ _id: req.params.id });
         yield Task_1.default.updateOne({ _id: req.params.id }, {

@@ -10,11 +10,12 @@ const taskRoutes=express.Router()
 
 taskRoutes.post('/upload',authenticateToken, async(req:any, res:Response) => {
   try {
-    const newTask ={
+      
+       const newTask ={
       userId:req.currentUser._id,
       task: req.body.task,
-      date: req.body.date,
-      time: req.body.time
+      date:req.body.date,
+      time:req.body.time
     };
      const validResult =validationSchema.validate(newTask)
      if(validResult.error){
@@ -31,9 +32,9 @@ taskRoutes.post('/upload',authenticateToken, async(req:any, res:Response) => {
     res.status(500)
   }
 });
-taskRoutes.get('/',async(req,res)=>{
+taskRoutes.get('/',authenticateToken, async(req:any,res:Response)=>{
  try{
-  const task= await Task.find()  
+  const task= await Task.find({userId:req.currentUser._id})  
   res.json(task)
   res.status(200)
  }
@@ -41,7 +42,7 @@ taskRoutes.get('/',async(req,res)=>{
  res.json('failed to get tasks')
  }
 })
-taskRoutes.delete('/delete/:id',async(req,res)=>{
+taskRoutes.delete('/delete/:id',authenticateToken, async(req,res)=>{
 try{
     
   await Task.findOne({_id:req.params.id})
@@ -53,7 +54,7 @@ catch(error){
 }
 })
 
-taskRoutes.patch('/update/:id', async(req:Request,res:Response)=>{
+taskRoutes.patch('/update/:id', authenticateToken, async(req:Request,res:Response)=>{
   try{
     
   await Task.findOne({_id:req.params.id})

@@ -12,19 +12,13 @@ exports.taskValiadtion = joi_1.default.object({
         .min(5)
         .max(10)
         .required(),
-    date: joi_1.default.string()
-        .min(8)
-        .max(8)
-        .default('today'),
-    time: joi_1.default.string()
-        .min(3)
-        .max(6)
-        .default('12 am'),
+    date: joi_1.default.string().required().regex(/^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\d|3[0-1])$/),
+    time: joi_1.default.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/).required(),
     userId: joi_1.default.required()
 });
 exports.validationSchema = exports.taskValiadtion.messages({
     'string.base': '{{#label}} must be a string',
     'string.min': '{{#label}} must be at least {{#limit}} characters long',
     'string.max': '{{#label}} cannot exceed {{#limit}} characters',
-    'string.email': 'Please enter a valid email address',
+    'string.regex': 'Please enter a valid {{#label}} format',
 });

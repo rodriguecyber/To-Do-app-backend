@@ -3,17 +3,28 @@ import express from 'express'
 import User from "../models/User"
 import authenticateToken from '../middeware/userMidleware'
 import jwt from 'jsonwebtoken'
+import { verify } from "crypto";
 const userRoutes=express.Router()
 
 
-  userRoutes.post('/signup', async(req:Request,res:Response) => {
+  userRoutes.post('/signup', async(req:any,res:Response) => {
     try {
+       
+      await User.find({email:req.body.email}).then(async(result:any)=>{
+       if(result.length===0){
         const newUser = await User.create({
             name: req.body.name,
             email: req.body.email,
             password: req.body.password
         });
         res.json(newUser);
+       }
+       else{
+        res.json({message:'user already exists'})
+       }
+        })
+        
+    
     } catch (error) {
         console.error(error);
         res.status(400).send('Failed to register');
@@ -60,4 +71,18 @@ userRoutes.post('/login',async (req:any,res:Response) => {
         res.status(500).send('Internal Server Error');
     }
 });
+userRoutes.post('/reset',(req:any,res)=>{
+  const email:string=req.body.email
+    User.find({email:email})
+    .then((result:any)=>{
+        if(result.length===0){
+            res.json({message:'email not found'})
+        } else{
+            const resetExpire:Number=eval(process.env.RESETEXPIRE as string)
+  const token = jwt.sign({email:email, exp:resetExpire},process.env.JWTRESET as string)
+  req.currentRequest=email;
+  res.json({message:'reset token sent ', token:token})
+        }
+    })
+})
       export default userRoutes

@@ -1,6 +1,6 @@
-const mongoose =require('mongoose')
+import mongoose from 'mongoose'
 const taskSchema = new mongoose.Schema({
-  userId:String,
+  userId:{type:String,required:true},
     task: String,
     date: String,
     time: String,

@@ -19,10 +19,9 @@ const authenticateToken = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     const token = authHeader && authHeader.split(' ')[1];
     jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET, (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
         if (err)
-            return res.sendStatus(403);
+            return res.json({ status: 403, message: 'token is invalid or expired! please login again' });
         req.currentUser = yield User_1.default.findById(decoded.userId);
         const exDate = decoded.exp;
-        req.remTime = exDate;
         if (Math.floor(Date.now() / 1000) > exDate) {
             res.json({
                 message: "token expired"
